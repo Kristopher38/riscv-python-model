@@ -331,7 +331,7 @@ class InstructionIType(InstructionFunct3Type, metaclass=ABCMeta):
 
 class InstructionILType(InstructionIType, metaclass=ABCMeta):
     """
-    I-type instruction specialization for stores. The produce a different
+    I-type instruction specialization for loads. They produce a different
     assembler than the base class
 
     :param rd: Destination register

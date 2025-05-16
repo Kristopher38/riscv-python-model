@@ -79,20 +79,20 @@ class Memory(object):
         word = address >> 2
         offset = address % 4
         if word not in self.memory:
-            self.memory[word] = randrange(0, 1 << 32)
+            return 0
         return (self.memory[word] >> (offset*8)) & 0xff
 
     def lh(self, address):
         word = address >> 2
         offset = (address >> 1) % 2
         if word not in self.memory:
-            self.memory[word] = randrange(0, 1 << 32)
-        return (self.memory[word] >> (offset*16)) & 0xffff
+            return 0
+        return (self.memory[word]  >> (offset*16)) & 0xffff
 
     def lw(self, address):
         word = address >> 2
         if word not in self.memory:
-            self.memory[word] = randrange(0, 1 << 32)
+            return 0
         return self.memory[word]
 
     def sb(self, address, data):
@@ -112,12 +112,16 @@ class Memory(object):
             address = update.addr
             base = address >> 2
             offset = address & 0x3
+            offset_hw = address & 0x2
             if base not in self.memory:
-                self.memory[base] = randrange(0, 1 << 32)
+                self.memory[base] = 0
             data = update.data
             if update.gran == TraceMemory.GRANULARITY.BYTE:
                 mask = ~(0xFF << (offset*8)) & 0xFFFFFFFF
                 data = (self.memory[base] & mask) | (data << (offset*8))
+            elif update.gran == TraceMemory.GRANULARITY.HALFWORD:
+                mask = ~(0xFFFF << (offset_hw*8)) & 0xFFFFFFFF
+                data = (self.memory[base] & mask) | (data << (offset_hw*8))
             self.memory[base] = data
 
         self.memory_updates = []

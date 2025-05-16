@@ -36,8 +36,9 @@ class InstructionJAL(InstructionJType):
 @isa("jalr", RV32I, opcode=0b1100111, funct3=0b000)
 class InstructionJALR(InstructionIType):
     def execute(self, model: Model):
+        target = (model.state.intreg[self.rs1] + self.imm) & 0xFFFFFFFE
         model.state.intreg[self.rd] = model.state.pc + 4
-        model.state.pc = model.state.intreg[self.rs1] + self.imm
+        model.state.pc = target
 
 
 @isa("beq", RV32I, opcode=0b1100011, funct3=0b000)
